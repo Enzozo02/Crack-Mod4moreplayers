@@ -5,12 +5,12 @@
 <h1 align="center">More Players for CRACK</h1>
 
 <p align="center">
-  <b>Play <a href="https://store.steampowered.com/app/4312190/CRACK/">CRACK</a> with up to 8 players, with double rooms and bunk beds.</b><br>
+  <b>Play <a href="https://store.steampowered.com/app/4312190/CRACK/">CRACK</a> with up to 8 players: double rooms with bunk beds, unique colours and quotas that scale with the crew.</b><br>
   BepInEx 5 mod · by <b>NeZorSpy</b>
 </p>
 
 <p align="center">
-  <a href="https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest"><b>⬇️ Download the latest release</b></a>
+  <a href="https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest"><b>⬇️ Download v1.2.0</b></a> · <a href="CHANGELOG.md">Changelog</a>
 </p>
 
 <p align="center">
@@ -22,6 +22,14 @@
 </p>
 
 ---
+
+## 🆕 What's new in v1.2.0
+
+- 📈 **Quotas that scale with big crews**: work order targets keep growing up to 8 players, plus a new `QuotaMultiplier` setting (×1.25 at 8 players by default, ramped in from 5; 1-4 players keep the vanilla targets). See [How quotas scale](#how-quotas-scale).
+- 🛒 **Shop unlocks in sync**: shop terminals now refresh as soon as a work order step is completed, even for players who joined mid-game.
+- 📺 **Employee Productivity Ranking fixed**: the lobby monitor no longer overflows with 5+ players. It shows pages of 4 with a `1/2` indicator.
+
+Full history in the [CHANGELOG](CHANGELOG.md).
 
 ## ✨ Features
 
@@ -49,7 +57,7 @@ Room assignment: player 5 → room 1 (upper bunk), 6 → room 2, 7 → room 3, 8
 
 ## 📥 Installation
 
-1. Download **`CRACK_MorePlayers_vX.Y.Z.zip`** from the [**Releases**](https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest) page.
+1. Download **`CRACK_MorePlayers_v1.2.0.zip`** from the [**Releases**](https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest) page.
 2. In Steam: right-click **CRACK** → *Manage* → *Browse local files*.
 3. Open the zip and copy **everything inside the `CRACK_MorePlayers` folder** (`winhttp.dll`, `doorstop_config.ini`, `.doorstop_version` and the `BepInEx` folder) **next to `CRACK.exe`**.
    ⚠️ Don't drop the `CRACK_MorePlayers` folder itself into the game folder, or BepInEx won't load.
@@ -76,6 +84,8 @@ Room assignment: player 5 → room 1 (upper bunk), 6 → room 2, 7 → room 3, 8
 > **Steam Deck / Linux:** the zip contains the Windows build of BepInEx, so run the Windows version through Proton (*Properties → Compatibility → Force Proton*) and add `WINEDLLOVERRIDES="winhttp=n,b" %command%` to the launch options. macOS is not supported.
 
 > **Already have BepInEx?** Only copy the files from `BepInEx/plugins/`.
+
+> **Updating from an older version?** Replace `BepInEx/plugins/CrackMorePlayers.dll` and `CrackMorePlayers.json` (every player). Your config is kept, and new settings such as `QuotaMultiplier` are added to it on the next launch. If you used v1.0.0 before the GUID change, you can delete the old `enzo.crack.moreplayers.cfg`.
 
 ## ⚙️ Configuration
 
@@ -136,6 +146,14 @@ Check <code>MaxPlayers</code> in the <b>host's</b> config and that the log says 
 CRACK was updated and renamed something the mod patches. Open an issue with your <code>LogOutput.log</code>.
 </details>
 
+<details><summary><b>Quotas feel too hard / too easy with a big crew</b></summary>
+Change <code>QuotaMultiplier</code> in the <b>host's</b> config: <code>1.0</code> = vanilla scaling, <code>1.25</code> = default, up to <code>3.0</code>. It only applies with more than 4 players and takes effect from the next work order step.
+</details>
+
+<details><summary><b>The shop still shows a catalog as locked</b></summary>
+Catalogs unlock when the work order step that lists them is <b>completed</b> (not when it starts). If a terminal still looks wrong after the step is done, open an issue with your <code>LogOutput.log</code> and say whether you were the host or a client.
+</details>
+
 <details><summary><b>Can I go above 8?</b></summary>
 No. 8 is the maximum: the lab has 4 rooms with 2 beds each, and every player gets their own bed and colour. You can set a lower value (for example 6).
 </details>
@@ -152,6 +170,8 @@ The full write-up is in [**docs/REVERSE_ENGINEERING.md**](docs/REVERSE_ENGINEERI
   - `QuartersRoom.Get` folds the index (`i % 4`).
   - A **transpiler** adds `% 4` after each read of `index` in the 6 door and wardrobe checks.
 - **Bunk beds:** the beds are **static-batched** (part of a `Combined Mesh` with world-space vertices that can't be read at runtime), so a simple clone is invisible. The bed geometry (1145 vertices) is extracted offline with `tools/extract_bed_mesh.py` and rebuilt at runtime. The posts use a single texel of the bed texture, so they match the frame colour.
+- **Work order:** `WorkOrderStep.CrewAmount` clamps per-crew tables at 4 players, so a postfix extends them. A `DailyTaskManager.TargetFor` postfix applies `QuotaMultiplier` above 4 players. `ShopApp` only subscribes to step changes once at start, so a `ShopApp.Update` postfix refreshes it whenever `DailyTaskManager.StepIndex` changes.
+- **UI built for 4:** the colour arrays (`ShiftCompleteUI`, `PlayerBlips`) are extended, the end-of-shift list gets a mask and auto-scroll, and both lobby ranking monitors (`EfficiencyDisplayApp`, `BalanceDisplayApp`) page their rows.
 - **MODS menu:** the main menu's *Leaderboards* button and panel are cloned, their localization and events are rewired, and the panel is filled from `BepInEx.Bootstrap.Chainloader.PluginInfos`.
 - The game's own **mod detection** (`ModDetection`, `modded` lobby flag, `RunRecord.Unrank`, achievements turned off) is **left untouched**.
 
@@ -193,8 +213,12 @@ python tools/extract_bed_mesh.py "C:\...\steamapps\common\CRACK" src/BedMeshData
 ## 📁 Repository layout
 
 ```
-src/        C# sources (MorePlayers.cs = gameplay patches, ModMenu.cs = MODS menu,
-            BedMeshData.cs = generated bed mesh, ModsIconData.cs = button icon)
+src/        C# sources
+            MorePlayers.cs  = player cap, slots, rooms, bunk beds
+            Progression.cs  = work order quotas + shop unlock sync
+            UiFixes.cs      = player colours, auto-scroll lists, ranking monitor pages
+            ModMenu.cs      = MODS menu
+            BedMeshData.cs  = generated bed mesh, ModsIconData.cs = button icon
 assets/     mod image + metadata JSON shipped next to the DLL, MODS button icon
 tools/      extract_bed_mesh.py (regenerates BedMeshData.cs from the game files)
 docs/       REVERSE_ENGINEERING.md: full technical analysis
