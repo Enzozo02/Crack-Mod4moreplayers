@@ -119,8 +119,20 @@ Scene `level0`, `MenuCanvas`:
 | `PlayerBlips.playerColors` (Color[4]) | `ColorForIndex(i)` → `i % Length` | prefix on `ColorForIndex`: same extension |
 | `ShiftCompleteUI._rowContainer` = `Sleep Content/Team/Panel` (VerticalLayoutGroup, 150 px cards) | only 4 cards fit, the 5th goes off-screen. The cursor is locked during this screen, so a mouse-wheel `ScrollRect` would not work | `RectMask2D` (top inset = header) + `AutoScroll`, which slides the content through `padding.top`: it follows new rows while they pop in, then ping-pongs with pauses |
 | `DreamUI._lifetimeContent` (495×269) | same overflow at 8 | same `AutoScroll` |
-| `BalanceDisplayApp` (world-space monitor, 320×250 canvas, 29 px rows in a 131 px list, `maxRows`) | the 5th row runs into the footer | `maxRows` raised; `BalancePager` turns on only the rows of the current page (4 per page, 6 s), with a `1/2` label |
+| `EfficiencyDisplayApp` (*Employee Productivity Ranking*, `PF_App_Productivity`) and `BalanceDisplayApp` (world-space monitors, 320×250 canvas, 29 px rows in a 131 px list, `maxRows`) | the 5th row runs into the footer | `maxRows` raised; `RankingPager` turns on only the rows of the current page (4 per page, 6 s), with a `1/2` label |
 
-## 8. Checking patches against a game update
+## 8. Work order: quotas and shop unlocks
+
+The daily task is a `WorkOrderTrack` (`Resources/Tasks`, 25 `WorkOrderStep`s) driven by `DailyTaskManager`, which has 3 SyncVars: `_stepIndex`, `_progress` and `_stepTarget`.
+
+**Targets** (`DailyTaskManager.TargetFor(step)`):
+- `amountByCrew` set (4 steps: ScanCalcium, CalciumShred `[2,3,3,4]`, FindCrystals `[1,2,3,3]`, ShredGrubs `[2,2,3,4]`) → `CrewAmount(players)` **clamps** the index to the last entry, so 5-8 players get the 4-player value. **Patch:** a `CrewAmount` postfix extends the table with its average step per player (ceil).
+- `ScalesWithCrew` (verb in {Peel, DepositValue, DepositBuckets, Shred*, Scaffold, Bolts, Drive, Detonate, ScanDeposits, BurstArterySacks, FindDeposits, MineLayer}) → `ceil(amount × (1 + (players − 1) × crewScaleSlope))`, with `crewScaleSlope = 0.5` in the scene: already linear and unbounded.
+- Everything else (arcade score, slot win, upgrades, Yolk) is a fixed personal goal.
+- **Patch:** a `TargetFor` postfix multiplies crew-scaled targets by `1 + (QuotaMultiplier − 1) × (players − 4) / 4` when there are more than 4 players.
+
+**Shop unlocks:** `WorkOrderTrack.IsCatalogUnlocked(cat, stepIndex)` = some step with `index < _stepIndex` lists the catalog in `unlockCatalogs`. The data is consistent everywhere, but `ShopApp.Start()` subscribes `OnShopStateChanged` to `DailyTaskManager.OnTaskStateChanged` / `ShopStateManager.OnStateChanged` **only if both instances exist at that moment**, and never retries (unlike `DailyTaskUI` / `UnlockWaypointAnnouncer`, which rebind in `LateUpdate`). **Patch:** a `ShopApp.Update` postfix watches `StepIndex` and calls `OnShopStateChanged` whenever it changes.
+
+## 9. Checking patches against a game update
 
 Every patch is a named method. If an update renames something, BepInEx logs a Harmony error or `Method X not found (game updated?)`. Run the Cecil and Harmony dry-run again (see `CONTRIBUTING` in the README) to find what moved.

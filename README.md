@@ -33,7 +33,9 @@
 | 🏷️ **Door plate** | Shows both roommates: `ENZO & PAUL` |
 | 🌅 **Proper spawn** | Players 5-8 wake up on their own bunk instead of at the origin of the map |
 | 🎨 **Unique colours** | Each player has their own colour (cards and graph on the end-of-shift screen, markers on the egg). Players 5-8: **purple, yellow, pink, teal** |
-| 📜 **Lists that fit** | End-of-shift *Team Performance* scrolls by itself (follows each new card, then goes up and down). The *Employee Productivity Ranking* screen shows **pages of 4** (1-4, then 5-8, every 6 s, with a `1/2` indicator) |
+| 📜 **Lists that fit** | End-of-shift *Team Performance* scrolls by itself (follows each new card, then goes up and down). The lobby ranking monitors (*Employee Productivity Ranking* and the balance board) show **pages of 4** (1-4, then 5-8, every 6 s, with a `1/2` indicator) |
+| 📈 **Quotas that scale** | Work order targets keep growing past 4 players (vanilla stops at the 4-player value for some steps), plus `QuotaMultiplier` (default ×1.25 at 8 players, ramped in from 5) |
+| 🛒 **Shop in sync** | Shop terminals always match the current work order step, so catalogs unlock as soon as the step is completed, even for players who joined mid-game |
 | 🧩 **MODS menu** | A new **MODS** button in the main menu lists every installed mod with its image, title, version, author and description (works for any BepInEx mod, see [For modders](#-for-modders-mods-menu-metadata)) |
 
 Room assignment: player 5 → room 1 (upper bunk), 6 → room 2, 7 → room 3, 8 → room 4. Every player has their own bed and colour, so 8 is the maximum.
@@ -67,7 +69,7 @@ Room assignment: player 5 → room 1 (upper bunk), 6 → room 2, 7 → room 3, 8
    ```
 4. Launch the game. The main menu should now have a **MODS** button, and `BepInEx/LogOutput.log` should contain:
    ```
-   [Info   :MorePlayers] MorePlayers 1.0.1 loaded, MaxPlayers = 8
+   [Info   :MorePlayers] MorePlayers 1.1.0 loaded, MaxPlayers = 8, QuotaMultiplier = 1.25
    [Info   :MorePlayers] Bunk bed created: room 1 -> player 5      (×4, once in the lab)
    ```
 
@@ -84,9 +86,31 @@ Room assignment: player 5 → room 1 (upper bunk), 6 → room 2, 7 → room 3, 8
 ## Maximum players in a lobby (host's value is the one that counts).
 # Acceptable value range: From 1 to 8
 MaxPlayers = 8
+
+## Extra difficulty for big crews: multiplier on crew-scaled work order targets,
+## ramped in from 5 players (x1 at 4) to its full value at 8. 1.0 = vanilla scaling.
+# Acceptable value range: From 0.5 to 3
+QuotaMultiplier = 1.25
 ```
 
-Only the **host's** value matters: it decides how many players can join. Clients can keep any value, because bunk beds, colours and lists are always built for up to 8 players.
+Only the **host's** values matter: `MaxPlayers` decides how many players can join, and `QuotaMultiplier` sets the work order targets. Clients can keep any value, because bunk beds, colours and lists are always built for up to 8 players.
+
+### How quotas scale
+
+CRACK already scales most work order targets with the crew: `target = ceil(base × (1 + (players − 1) × 0.5))`. With more than 4 players, the mod adds two things:
+- the steps that use a fixed per-crew table (scan / shred calcium, find crystals, shred grubs) keep growing past 4 players (for example `[2,3,3,4]` becomes 5, 6, 6, 7 for 5-8 players), where vanilla stays at the 4-player value;
+- `QuotaMultiplier` is applied on top, ramped in from 5 players so there is no jump between 4 and 5.
+
+| Step | 4 players | 5 | 6 | 7 | 8 (vanilla) | 8 (mod, ×1.25) |
+|---|---|---|---|---|---|---|
+| Peel shell | 75 | 96 | 119 | 143 | 135 | **169** |
+| Deposit buckets | 5 | 7 | 8 | 10 | 9 | **12** |
+| Shell / Membrane value | 7,500 | 9,563 | 11,813 | 14,250 | 13,500 | **16,875** |
+| Flesh value | 17,500 | 22,313 | 27,563 | 33,250 | 31,500 | **39,375** |
+| Calcite value | 62,500 | 79,688 | 98,438 | 118,750 | 112,500 | **140,625** |
+| Hatchite value | 75,000 | 95,625 | 118,125 | 142,500 | 135,000 | **168,750** |
+
+Personal goals (arcade score, slot win, upgrades, the Yolk) don't depend on the crew size, in vanilla or with the mod. Set `QuotaMultiplier = 1.0` to keep the vanilla curve.
 
 ## 🗑️ Uninstall
 

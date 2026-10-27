@@ -180,36 +180,58 @@ namespace CrackMorePlayers
         }
     }
 
-    // ---- Productivity ranking monitor: pages of 4 ---------------------------
+    // ---- Ranking monitors: pages of 4 ---------------------------------------
+    // Both lobby monitors (Productivity = EfficiencyDisplayApp, Balance = BalanceDisplayApp)
+    // share the same layout: rowContainer, _rows, a SyncList "standings" and maxRows.
 
-    [HarmonyPatch(typeof(BalanceDisplayApp), "Awake")]
-    static class BalanceDisplayApp_Awake
+    [HarmonyPatch]
+    static class RankingApp_Awake
     {
-        static readonly FieldInfo MaxRows = AccessTools.Field(typeof(BalanceDisplayApp), "maxRows");
-        static void Postfix(BalanceDisplayApp __instance)
+        static IEnumerable<MethodBase> TargetMethods()
         {
-            if ((int)MaxRows.GetValue(__instance) < Plugin.HardMax)
-                MaxRows.SetValue(__instance, Plugin.HardMax);
-            if (__instance.GetComponent<BalancePager>() == null)
-                __instance.gameObject.AddComponent<BalancePager>().App = __instance;
+            yield return AccessTools.Method(typeof(EfficiencyDisplayApp), "Awake");
+            yield return AccessTools.Method(typeof(BalanceDisplayApp), "Awake");
+        }
+        static void Postfix(Component __instance)
+        {
+            var maxRows = AccessTools.Field(__instance.GetType(), "maxRows");
+            if (maxRows != null && (int)maxRows.GetValue(__instance) < Plugin.HardMax)
+                maxRows.SetValue(__instance, Plugin.HardMax);
+            if (__instance.GetComponent<RankingPager>() == null)
+                __instance.gameObject.AddComponent<RankingPager>().App = __instance;
         }
     }
 
-    [HarmonyPatch(typeof(BalanceDisplayApp), "Rebuild")]
-    static class BalanceDisplayApp_Rebuild
+    [HarmonyPatch]
+    static class RankingApp_Rebuild
     {
-        static void Postfix(BalanceDisplayApp __instance) => __instance.GetComponent<BalancePager>()?.Apply();
+        static IEnumerable<MethodBase> TargetMethods()
+        {
+            yield return AccessTools.Method(typeof(EfficiencyDisplayApp), "Rebuild");
+            yield return AccessTools.Method(typeof(BalanceDisplayApp), "Rebuild");
+        }
+        static void Postfix(Component __instance) => __instance.GetComponent<RankingPager>()?.Apply();
     }
 
-    class BalancePager : MonoBehaviour
+    class RankingPager : MonoBehaviour
     {
         const int PageSize = 4;
         const float PageSeconds = 6f;
-        static readonly FieldInfo RowsF = AccessTools.Field(typeof(BalanceDisplayApp), "_rows");
-        static readonly FieldInfo StandingsF = AccessTools.Field(typeof(BalanceDisplayApp), "standings");
-        static readonly FieldInfo ContainerF = AccessTools.Field(typeof(BalanceDisplayApp), "rowContainer");
 
-        public BalanceDisplayApp App;
+        Component _app;
+        FieldInfo RowsF, StandingsF, ContainerF;
+        public Component App
+        {
+            get => _app;
+            set
+            {
+                _app = value;
+                var t = value.GetType();
+                RowsF = AccessTools.Field(t, "_rows");
+                StandingsF = AccessTools.Field(t, "standings");
+                ContainerF = AccessTools.Field(t, "rowContainer");
+            }
+        }
         int _page;
         float _timer;
         TMP_Text _indicator;

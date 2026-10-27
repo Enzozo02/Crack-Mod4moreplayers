@@ -20,7 +20,7 @@ namespace CrackMorePlayers
     public class Plugin : BaseUnityPlugin
     {
         public const string Guid = "nezorspy.crack.moreplayers";
-        public const string Version = "1.0.1";
+        public const string Version = "1.1.0";
 
         // The game ships with 4 player quarters (rooms, beds, wardrobes, doors).
         public const int VanillaSlots = 4;
@@ -30,6 +30,7 @@ namespace CrackMorePlayers
         public const int HardMax = 8;
 
         internal static ConfigEntry<int> MaxPlayers;
+        internal static ConfigEntry<float> QuotaMultiplier;
         internal static ManualLogSource Log;
 
         private void Awake()
@@ -39,9 +40,14 @@ namespace CrackMorePlayers
                 new ConfigDescription(
                     "Maximum players in a lobby (host's value is the one that counts).",
                     new AcceptableValueRange<int>(1, HardMax)));
+            QuotaMultiplier = Config.Bind("General", "QuotaMultiplier", 1.25f,
+                new ConfigDescription(
+                    "Extra difficulty for big crews: multiplier on crew-scaled work order targets, ramped in from 5 players " +
+                    "(x1 at 4) to its full value at 8. Host's value is the one that counts. 1.0 = vanilla scaling.",
+                    new AcceptableValueRange<float>(0.5f, 3f)));
 
             new Harmony(Guid).PatchAll(typeof(Plugin).Assembly);
-            Log.LogInfo($"MorePlayers {Version} loaded, MaxPlayers = {MaxPlayers.Value}");
+            Log.LogInfo($"MorePlayers {Version} loaded, MaxPlayers = {MaxPlayers.Value}, QuotaMultiplier = {QuotaMultiplier.Value}");
         }
 
         internal static void ApplyMax(NetworkManager nm)
