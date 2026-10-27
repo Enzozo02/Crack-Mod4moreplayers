@@ -1,0 +1,5 @@
+{
+  "title": "More Players",
+  "author": "NeZorSpy",
+  "description": "Raises CRACK's crew limit from 4 to 8 players (MaxPlayers, 1-8).\n• Network: Mirror maxConnections and the Steam lobby size follow the MaxPlayers setting.\n• Player slots: GameManager.GetAvailablePlayerIndex no longer stops at 4.\n• Double rooms: players 5-8 get a bunk bed above players 1-4 (the static-batched bed is rebuilt from mesh data extracted from the game), and share the badge door and wardrobe of their room. The door plate shows both names.\n• UI: a unique colour per player, an auto-scrolling end-of-shift list, and a ranking monitor that pages through players 4 at a time.\nEvery player in the lobby needs the mod (CRACK keeps modded and vanilla lobbies apart). Setting: BepInEx/config/nezorspy.crack.moreplayers.cfg"
+}

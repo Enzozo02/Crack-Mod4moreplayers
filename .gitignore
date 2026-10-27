@@ -1,0 +1,15 @@
+# build output
+bin/
+obj/
+*.user
+.vs/
+.idea/
+# local release archives (upload them to GitHub Releases instead)
+release/
+# python
+__pycache__/
+*.pyc
+# never commit game files
+CRACK_Data/
+*.assets
+*.resS
