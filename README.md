@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest"><b>⬇️ Download the latest release (v1.0.0)</b></a>
+  <a href="https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest"><b>⬇️ Download the latest release</b></a>
 </p>
 
 <p align="center">
@@ -47,7 +47,7 @@ Room assignment: player 5 → room 1 (upper bunk), 6 → room 2, 7 → room 3, 8
 
 ## 📥 Installation
 
-1. Download **`CRACK_MorePlayers_v1.0.0.zip`** from the [**Releases**](https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest) page.
+1. Download **`CRACK_MorePlayers_vX.Y.Z.zip`** from the [**Releases**](https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest) page.
 2. In Steam: right-click **CRACK** → *Manage* → *Browse local files*.
 3. Open the zip and copy **everything inside the `CRACK_MorePlayers` folder** (`winhttp.dll`, `doorstop_config.ini`, `.doorstop_version` and the `BepInEx` folder) **next to `CRACK.exe`**.
    ⚠️ Don't drop the `CRACK_MorePlayers` folder itself into the game folder, or BepInEx won't load.
@@ -67,7 +67,7 @@ Room assignment: player 5 → room 1 (upper bunk), 6 → room 2, 7 → room 3, 8
    ```
 4. Launch the game. The main menu should now have a **MODS** button, and `BepInEx/LogOutput.log` should contain:
    ```
-   [Info   :MorePlayers] MorePlayers 1.0.0 loaded, MaxPlayers = 8
+   [Info   :MorePlayers] MorePlayers 1.0.1 loaded, MaxPlayers = 8
    [Info   :MorePlayers] Bunk bed created: room 1 -> player 5      (×4, once in the lab)
    ```
 
@@ -86,7 +86,7 @@ Room assignment: player 5 → room 1 (upper bunk), 6 → room 2, 7 → room 3, 8
 MaxPlayers = 8
 ```
 
-The **host's** value decides the lobby size. Clients should use the same value, so the bunk beds show up on their side too.
+Only the **host's** value matters: it decides how many players can join. Clients can keep any value, because bunk beds, colours and lists are always built for up to 8 players.
 
 ## 🗑️ Uninstall
 

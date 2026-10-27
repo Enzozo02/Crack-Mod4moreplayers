@@ -20,10 +20,14 @@ namespace CrackMorePlayers
     public class Plugin : BaseUnityPlugin
     {
         public const string Guid = "nezorspy.crack.moreplayers";
-        public const string Version = "1.0.0";
+        public const string Version = "1.0.1";
 
         // The game ships with 4 player quarters (rooms, beds, wardrobes, doors).
         public const int VanillaSlots = 4;
+
+        // Hard cap: 4 rooms x 2 beds. Anything client-side (bunks, colours, rows) is built
+        // for this many players regardless of the local MaxPlayers, which only matters on the host.
+        public const int HardMax = 8;
 
         internal static ConfigEntry<int> MaxPlayers;
         internal static ManualLogSource Log;
@@ -34,7 +38,7 @@ namespace CrackMorePlayers
             MaxPlayers = Config.Bind("General", "MaxPlayers", 8,
                 new ConfigDescription(
                     "Maximum players in a lobby (host's value is the one that counts).",
-                    new AcceptableValueRange<int>(1, 8)));
+                    new AcceptableValueRange<int>(1, HardMax)));
 
             new Harmony(Guid).PatchAll(typeof(Plugin).Assembly);
             Log.LogInfo($"MorePlayers {Version} loaded, MaxPlayers = {MaxPlayers.Value}");
@@ -146,8 +150,7 @@ namespace CrackMorePlayers
             if (_cloning) return;
             int idx = PlayerIndex(lower);
             if (idx < 0 || idx >= Plugin.VanillaSlots) return;
-            int bunkIdx = idx + Plugin.VanillaSlots;
-            if (bunkIdx >= Plugin.MaxPlayers.Value) return;
+            int bunkIdx = idx + Plugin.VanillaSlots;   // always built: the host decides how many players join
             if (Beds().ContainsKey(bunkIdx)) return;
 
             Bed upper;

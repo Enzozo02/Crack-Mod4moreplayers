@@ -61,7 +61,7 @@ namespace CrackMorePlayers
             return list.ToArray();
         }
 
-        public static int Needed(int atLeast) => Math.Max(Math.Max(Plugin.MaxPlayers.Value, atLeast), Plugin.VanillaSlots);
+        public static int Needed(int atLeast) => Math.Max(atLeast, Plugin.HardMax);
     }
 
     [HarmonyPatch(typeof(ShiftCompleteUI), "BuildRows")]
@@ -188,8 +188,8 @@ namespace CrackMorePlayers
         static readonly FieldInfo MaxRows = AccessTools.Field(typeof(BalanceDisplayApp), "maxRows");
         static void Postfix(BalanceDisplayApp __instance)
         {
-            if ((int)MaxRows.GetValue(__instance) < Plugin.MaxPlayers.Value)
-                MaxRows.SetValue(__instance, Plugin.MaxPlayers.Value);
+            if ((int)MaxRows.GetValue(__instance) < Plugin.HardMax)
+                MaxRows.SetValue(__instance, Plugin.HardMax);
             if (__instance.GetComponent<BalancePager>() == null)
                 __instance.gameObject.AddComponent<BalancePager>().App = __instance;
         }
