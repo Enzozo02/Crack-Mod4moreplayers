@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.0](https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/tag/v1.1.0) - 2026-10-28
+## [1.2.0](https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/tag/v1.2.0) - 2026-10-28
 - Fix: the **Employee Productivity Ranking** monitor (`EfficiencyDisplayApp`) overflowed with 5+ players. The paging (4 per page, `1/2` indicator) only applied to the balance board, and now covers both monitors.
 - Fix: **shop unlocks out of sync with the work order**. `ShopApp` subscribes to step changes only once, at start, so players who joined mid-game (or terminals that started before the managers) kept stale catalog locks. Shop terminals now refresh whenever the work order step changes.
 - **Quotas scale past 4 players**: per-crew target tables (calcium, crystals, grubs) keep growing for 5-8 players instead of stopping at the 4-player value.

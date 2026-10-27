@@ -69,7 +69,7 @@ Room assignment: player 5 → room 1 (upper bunk), 6 → room 2, 7 → room 3, 8
    ```
 4. Launch the game. The main menu should now have a **MODS** button, and `BepInEx/LogOutput.log` should contain:
    ```
-   [Info   :MorePlayers] MorePlayers 1.1.0 loaded, MaxPlayers = 8, QuotaMultiplier = 1.25
+   [Info   :MorePlayers] MorePlayers 1.2.0 loaded, MaxPlayers = 8, QuotaMultiplier = 1.25
    [Info   :MorePlayers] Bunk bed created: room 1 -> player 5      (×4, once in the lab)
    ```
 

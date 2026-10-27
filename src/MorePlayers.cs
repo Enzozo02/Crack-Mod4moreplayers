@@ -20,7 +20,7 @@ namespace CrackMorePlayers
     public class Plugin : BaseUnityPlugin
     {
         public const string Guid = "nezorspy.crack.moreplayers";
-        public const string Version = "1.1.0";
+        public const string Version = "1.2.0";
 
         // The game ships with 4 player quarters (rooms, beds, wardrobes, doors).
         public const int VanillaSlots = 4;
