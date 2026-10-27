@@ -10,9 +10,15 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest"><b>⬇️ Download the latest release (v1.0.0)</b></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest"><img src="https://img.shields.io/github/v/release/Enzozo02/Crack-Mod4moreplayers?label=download&style=for-the-badge" alt="Download"></a>
   <img src="https://img.shields.io/badge/BepInEx-5.4.23-blue?style=for-the-badge" alt="BepInEx 5">
-  <img src="https://img.shields.io/badge/status-beta-orange?style=for-the-badge" alt="beta">
+  <img src="https://img.shields.io/badge/status-stable-brightgreen?style=for-the-badge" alt="stable">
+  <img src="https://img.shields.io/badge/players-up%20to%208-red?style=for-the-badge" alt="up to 8 players">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey?style=for-the-badge" alt="MIT"></a>
 </p>
 
 ---
@@ -41,9 +47,11 @@ Room assignment: player 5 → room 1 (upper bunk), 6 → room 2, 7 → room 3, 8
 
 ## 📥 Installation
 
-1. Download `CRACK_MorePlayers_vX.Y.Z.zip` from the [**Releases**](https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest) page.
+1. Download **`CRACK_MorePlayers_v1.0.0.zip`** from the [**Releases**](https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/latest) page.
 2. In Steam: right-click **CRACK** → *Manage* → *Browse local files*.
-3. Extract **the contents** of the zip next to `CRACK.exe`. The folder should look like this:
+3. Open the zip and copy **everything inside the `CRACK_MorePlayers` folder** (`winhttp.dll`, `doorstop_config.ini`, `.doorstop_version` and the `BepInEx` folder) **next to `CRACK.exe`**.
+   ⚠️ Don't drop the `CRACK_MorePlayers` folder itself into the game folder, or BepInEx won't load.
+   Your game folder should look like this:
    ```
    CRACK/
    ├── CRACK.exe
@@ -93,7 +101,7 @@ The host or the joining player doesn't have the mod (or BepInEx). Every player n
 </details>
 
 <details><summary><b>Nothing changes and there's no MODS button</b></summary>
-BepInEx isn't loading. Check that <code>winhttp.dll</code> is next to <code>CRACK.exe</code> and that a <code>BepInEx/LogOutput.log</code> file shows up after launching. On Linux/Steam Deck, make sure you run the Windows version through Proton with the launch option above.
+BepInEx isn't loading. Check that <code>winhttp.dll</code> is <b>directly</b> next to <code>CRACK.exe</code> (if you see a <code>CRACK_MorePlayers</code> folder in the game folder, move its contents up one level and delete it) and that a <code>BepInEx/LogOutput.log</code> file shows up after launching. On Linux/Steam Deck, make sure you run the Windows version through Proton with the launch option above.
 </details>
 
 <details><summary><b>The 5th player can't join</b></summary>

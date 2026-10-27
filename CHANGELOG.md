@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (first release)
+## [1.0.0](https://github.com/Enzozo02/Crack-Mod4moreplayers/releases/tag/v1.0.0) - 2026-10-27 (first stable release)
 - **Up to 8 players**: the Steam lobby size, Mirror `maxConnections` and the in-game player slots (`GameManager.GetAvailablePlayerIndex`) follow `MaxPlayers` (1-8, default 8).
 - **Double rooms**: players 5-8 get a bunk bed above players 1-4 (the static-batched bed mesh is rebuilt from data extracted from the game, with posts in the bed-frame colour), spawn on their bunk, and share the room's badge door and wardrobe. The door plate shows both names.
 - **Unique colour per player**: shift summary cards, graph lines and egg blips (players 5-8: purple, yellow, pink, teal).
